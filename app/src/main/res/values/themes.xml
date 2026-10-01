@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema base del sistema; los colores reales los maneja Compose en ui/theme -->
+    <style name="Theme.TPJuego" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

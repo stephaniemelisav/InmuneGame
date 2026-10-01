@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ícono provisorio: un gamepad simple. Se reemplaza con el del diseño de Figma. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#6650A4"
+        android:pathData="M0,0h48v48h-48z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M14,17h20a7,7 0,0 1,7 7v0a7,7 0,0 1,-7 7h-20a7,7 0,0 1,-7 -7v0a7,7 0,0 1,7 -7z" />
+    <path
+        android:fillColor="#6650A4"
+        android:pathData="M13,23h2v-2h2v2h2v2h-2v2h-2v-2h-2z" />
+    <path
+        android:fillColor="#6650A4"
+        android:pathData="M33,22m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0" />
+    <path
+        android:fillColor="#6650A4"
+        android:pathData="M30,26m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0" />
+</vector>
