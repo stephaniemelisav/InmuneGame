@@ -1,6 +1,9 @@
 # Design System — InmuneGame
 
 Grupo 7 · Temática: Sustancias ilegales
+
+> **Versión 1 — propuesta inicial (Actividad 3).** Sujeta a ajustes en las próximas etapas.
+
 Unidad de medida: **px** (pantalla de referencia 360 × 800 px).
 
 ---

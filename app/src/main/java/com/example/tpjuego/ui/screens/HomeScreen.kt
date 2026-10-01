@@ -31,7 +31,7 @@ fun HomeScreen(onPlayClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "TP Juego",
+                text = "INMUNE GAME 7",
                 style = MaterialTheme.typography.displaySmall,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -45,12 +45,12 @@ fun HomeScreen(onPlayClick: () -> Unit) {
                 onClick = onPlayClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Jugar")
+                Text("Comience a jugar")
             }
         }
     }
 }
-
+//Con el preview mostramos en el panel split, útil para desarrollar estos componentes y visualizar la previa
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun HomeScreenPreview() {

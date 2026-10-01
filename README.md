@@ -29,7 +29,7 @@ La app abre con un **menú de juegos**: "¿Mito o Realidad?" es el primero, y es
 
 ### Imágenes
 
-| | |
+| Contenido | Archivo |
 |---|---|
 | Persona usuaria | [img/persona.png](img/persona.png) |
 | Design System completo | [img/design-system.png](img/design-system.png) |
