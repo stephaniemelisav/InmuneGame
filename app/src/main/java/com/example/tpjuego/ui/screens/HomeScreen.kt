@@ -20,7 +20,10 @@ import com.example.tpjuego.ui.theme.TPJuegoTheme
 
 // Pantalla de inicio provisoria. Se rehace siguiendo el diseño de Figma.
 @Composable
-fun HomeScreen(onPlayClick: () -> Unit) {
+fun HomeScreen(
+    onPlayClick: () -> Unit,
+    onMemotestClick: () -> Unit
+) {
     Scaffold { innerPadding ->
         Column(
             modifier = Modifier
@@ -47,14 +50,22 @@ fun HomeScreen(onPlayClick: () -> Unit) {
             ) {
                 Text("Comience a jugar")
             }
+            Spacer(Modifier.height(16.dp))
+            Button(
+                onClick = onMemotestClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Memotest")
+            }
         }
     }
 }
+
 //Con el preview mostramos en el panel split, útil para desarrollar estos componentes y visualizar la previa
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun HomeScreenPreview() {
     TPJuegoTheme {
-        HomeScreen(onPlayClick = {})
+        HomeScreen(onPlayClick = {}, onMemotestClick = {})
     }
 }
