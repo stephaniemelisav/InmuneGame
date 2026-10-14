@@ -1,32 +1,28 @@
 package com.example.tpjuego.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+// La app usa siempre fondo oscuro con texto claro (ver justificación de la paleta),
+// así que hay un único esquema de colores, sin modo claro/oscuro.
+private val InmuneColorScheme = darkColorScheme(
+    primary = Amarillo,
+    onPrimary = AzulNoche,
+    secondary = Turquesa,
+    onSecondary = Blanco,
+    background = AzulNoche,
+    onBackground = Blanco,
+    surface = Blanco,
+    onSurface = AzulNoche,
+    error = RojoFalso,
+    onError = Blanco
 )
 
 @Composable
-fun TPJuegoTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-
+fun TPJuegoTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = InmuneColorScheme,
         typography = Typography,
         content = content
     )

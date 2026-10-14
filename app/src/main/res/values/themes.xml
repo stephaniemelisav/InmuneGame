@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Tema base del sistema; los colores reales los maneja Compose en ui/theme -->
-    <style name="Theme.TPJuego" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Tema base del sistema; los colores reales los maneja Compose en ui/theme.
+         El fondo azul noche evita un destello blanco al abrir la app. -->
+    <style name="Theme.TPJuego" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/azul_noche</item>
+    </style>
 </resources>
