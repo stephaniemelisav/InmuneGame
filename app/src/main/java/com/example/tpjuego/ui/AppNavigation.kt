@@ -8,6 +8,7 @@ import com.example.tpjuego.ui.screens.ComoSeJuegaScreen
 import com.example.tpjuego.ui.screens.GameScreen
 import com.example.tpjuego.ui.screens.HomeScreen
 import com.example.tpjuego.ui.screens.IntroScreen
+import com.example.tpjuego.ui.screens.MemotestScreen
 import com.example.tpjuego.ui.screens.PortadaScreen
 
 // Rutas de la app. Para el segundo juego se suman acá sus pantallas.
@@ -17,6 +18,7 @@ object Routes {
     const val MITO_PORTADA = "mito/portada"
     const val MITO_COMO_SE_JUEGA = "mito/como-se-juega"
     const val MITO_JUEGO = "mito/juego"
+    const val MEMOTEST = "memotest"
 }
 
 @Composable
@@ -39,6 +41,7 @@ fun AppNavigation() {
         composable(Routes.MENU) {
             HomeScreen(
                 onMitoORealidadClick = { navController.navigate(Routes.MITO_PORTADA) },
+                onMemotestClick = { navController.navigate(Routes.MEMOTEST) },
                 onVerIntro = { navController.navigate(Routes.INTRO) }
             )
         }
@@ -63,6 +66,9 @@ fun AppNavigation() {
                 // "Terminar" cierra el juego y vuelve al menú de la app.
                 onTerminar = { navController.popBackStack(Routes.MENU, inclusive = false) }
             )
+        }
+        composable(Routes.MEMOTEST) {
+            MemotestScreen(onVolver = { navController.popBackStack(Routes.MENU, inclusive = false) })
         }
     }
 }

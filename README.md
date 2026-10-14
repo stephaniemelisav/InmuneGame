@@ -58,7 +58,7 @@ La lógica tiene tests unitarios en `app/src/test/` (se corren con `./gradlew te
 ### Flujo de la app
 
 1. **Intro multimedia de concientización** al abrir la app (se puede saltear y volver a ver desde el menú).
-2. **Menú de juegos**: ¿Mito o Realidad? y el segundo juego.
+2. **Menú de juegos**: ¿Mito o Realidad? y **Memotest** (juego de Enzo: unir cada sustancia con su dato, con contador de intentos y resumen final).
 3. **¿Mito o Realidad?**: portada, cómo se juega y 5 preguntas, con contador de aciertos y errores arriba.
 4. **Pantalla final**: puntaje, contador de aciertos y errores, resumen pregunta por pregunta e historial de las últimas partidas. **"Terminar y volver al menú"** cierra el juego y vuelve a la app.
 

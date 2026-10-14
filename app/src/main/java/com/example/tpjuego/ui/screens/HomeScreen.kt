@@ -18,7 +18,11 @@ import com.example.tpjuego.ui.theme.TPJuegoTheme
 // Menú de juegos: lo primero que se ve al abrir la app, sin registro.
 // Las tarjetas van en la mitad de abajo, al alcance del pulgar.
 @Composable
-fun HomeScreen(onMitoORealidadClick: () -> Unit, onVerIntro: () -> Unit) {
+fun HomeScreen(
+    onMitoORealidadClick: () -> Unit,
+    onMemotestClick: () -> Unit,
+    onVerIntro: () -> Unit
+) {
     PantallaDegradado {
         Spacer(Modifier.height(32.dp))
         Text(
@@ -43,9 +47,9 @@ fun HomeScreen(onMitoORealidadClick: () -> Unit, onVerIntro: () -> Unit) {
         )
         Spacer(Modifier.height(16.dp))
         TarjetaJuego(
-            titulo = "Decisiones en la previa",
-            descripcion = "Elegí qué hacer cuando el grupo presiona.",
-            onClick = null
+            titulo = "Memotest",
+            descripcion = "Encontrá los pares: cada sustancia con su dato. Juego de Enzo.",
+            onClick = onMemotestClick
         )
     }
 }
@@ -55,6 +59,6 @@ fun HomeScreen(onMitoORealidadClick: () -> Unit, onVerIntro: () -> Unit) {
 @Composable
 private fun HomeScreenPreview() {
     TPJuegoTheme {
-        HomeScreen(onMitoORealidadClick = {}, onVerIntro = {})
+        HomeScreen(onMitoORealidadClick = {}, onMemotestClick = {}, onVerIntro = {})
     }
 }
