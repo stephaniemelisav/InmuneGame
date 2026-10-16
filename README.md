@@ -8,10 +8,11 @@
 
 | Integrante | Rol |
 |---|---|
-| _Nombre Apellido_ | Líder IT |
-| _Nombre Apellido_ | _Rol_ |
-| _Nombre Apellido_ | _Rol_ |
-| _Nombre Apellido_ | _Rol_ |
+| Stephanie Velarde | Diseño y estructura del proyecto |
+| Gonzalo Giri Petray | Desarrollo e integración de la app |
+| Enzo Páez | Desarrollo del Memotest |
+
+El juego **¿Mito o Realidad?** se desarrolló de manera colaborativa entre los tres integrantes. El detalle del aporte de cada uno está en [DOCUMENTACION.md](DOCUMENTACION.md#e-participación-de-los-integrantes).
 
 ## Descripción del juego
 
@@ -20,6 +21,10 @@
 Después de cada respuesta, acierte o no, aparece una explicación breve basada en fuentes confiables (SEDRONAR / Observatorio Argentino de Drogas, Sociedad Argentina de Pediatría). Al final ve su puntaje y un mensaje que invita a informarse en fuentes confiables. El juego no busca retar ni moralizar, sino entrenar el hábito de **dudar antes de creer** lo que se dice entre pares.
 
 La app abre con un **menú de juegos**: "¿Mito o Realidad?" es el primero, y está previsto un segundo juego de **decisiones bajo presión social** (narrativa ramificada), según los formatos propuestos en la investigación.
+
+## Documentación
+
+- **Documentación del desarrollo** (descripción, estructura, Design System, implementación técnica y participación): [DOCUMENTACION.md](DOCUMENTACION.md)
 
 ## Diseño
 

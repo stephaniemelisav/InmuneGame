@@ -17,6 +17,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Un juego por Activity. Se abren desde el menú con un Intent. -->
+        <activity
+            android:name=".MitoORealidadActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TPJuego" />
+        <activity
+            android:name=".MemotestActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TPJuego" />
     </application>
 
 </manifest>
