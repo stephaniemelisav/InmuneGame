@@ -21,6 +21,9 @@ class MainActivity : BaseActivity() {
                     },
                     onAbrirMemotest = {
                         startActivity(Intent(this, MemotestActivity::class.java))
+                    },
+                    onAbrirLaPrevia = {
+                        startActivity(Intent(this, LaPreviaActivity::class.java))
                     }
                 )
             }

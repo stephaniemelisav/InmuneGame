@@ -20,7 +20,7 @@ El juego **¿Mito o Realidad?** se desarrolló de manera colaborativa entre los 
 
 Después de cada respuesta, acierte o no, aparece una explicación breve basada en fuentes confiables (SEDRONAR / Observatorio Argentino de Drogas, Sociedad Argentina de Pediatría). Al final ve su puntaje y un mensaje que invita a informarse en fuentes confiables. El juego no busca retar ni moralizar, sino entrenar el hábito de **dudar antes de creer** lo que se dice entre pares.
 
-La app abre con un **menú de juegos**: "¿Mito o Realidad?" es el primero, y está previsto un segundo juego de **decisiones bajo presión social** (narrativa ramificada), según los formatos propuestos en la investigación.
+La app abre con un **menú de juegos** con tres juegos: **¿Mito o Realidad?**, el **Memotest** y **La Previa**, una historia de **decisiones bajo presión social** (narrativa ramificada), el formato propuesto en la investigación.
 
 ## Documentación
 
@@ -63,7 +63,7 @@ La lógica tiene tests unitarios en `app/src/test/` (se corren con `./gradlew te
 ### Flujo de la app
 
 1. **Intro multimedia de concientización** al abrir la app (se puede saltear y volver a ver desde el menú).
-2. **Menú de juegos**: ¿Mito o Realidad? y **Memotest** (juego de Enzo: unir cada sustancia con su dato, con contador de intentos y resumen final).
+2. **Menú de juegos**: ¿Mito o Realidad?, **Memotest** (juego de Enzo: unir cada sustancia con su dato, con contador de intentos y resumen final) y **La Previa** (juego de Stephanie: modo historia en 6 escenas donde cada decisión lleva a su camino, con recorrido y recursos al final).
 3. **¿Mito o Realidad?**: portada, cómo se juega y 5 preguntas, con contador de aciertos y errores arriba.
 4. **Pantalla final**: puntaje, contador de aciertos y errores, resumen pregunta por pregunta e historial de las últimas partidas. **"Terminar y volver al menú"** cierra el juego y vuelve a la app.
 

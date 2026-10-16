@@ -27,6 +27,10 @@
             android:name=".MemotestActivity"
             android:exported="false"
             android:theme="@style/Theme.TPJuego" />
+        <activity
+            android:name=".LaPreviaActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TPJuego" />
     </application>
 
 </manifest>

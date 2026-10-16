@@ -14,6 +14,7 @@ import com.example.tpjuego.ui.screens.PortadaScreen
 //  - MainActivity:          intro y menú de juegos       -> AppNavigation()
 //  - MitoORealidadActivity: el juego ¿Mito o Realidad?   -> MitoORealidadNavigation()
 //  - MemotestActivity:      el Memotest (una sola pantalla)
+//  - LaPreviaActivity:      La Previa, modo historia (una sola pantalla con fases)
 object Routes {
     const val INTRO = "intro"
     const val MENU = "menu"
@@ -26,7 +27,8 @@ object Routes {
 @Composable
 fun AppNavigation(
     onAbrirMitoORealidad: () -> Unit,
-    onAbrirMemotest: () -> Unit
+    onAbrirMemotest: () -> Unit,
+    onAbrirLaPrevia: () -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -47,6 +49,7 @@ fun AppNavigation(
             HomeScreen(
                 onMitoORealidadClick = onAbrirMitoORealidad,
                 onMemotestClick = onAbrirMemotest,
+                onLaPreviaClick = onAbrirLaPrevia,
                 onVerIntro = { navController.navigate(Routes.INTRO) }
             )
         }

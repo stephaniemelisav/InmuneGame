@@ -21,6 +21,7 @@ import com.example.tpjuego.ui.theme.TPJuegoTheme
 fun HomeScreen(
     onMitoORealidadClick: () -> Unit,
     onMemotestClick: () -> Unit,
+    onLaPreviaClick: () -> Unit,
     onVerIntro: () -> Unit
 ) {
     PantallaDegradado {
@@ -51,6 +52,12 @@ fun HomeScreen(
             descripcion = "Encontrá los pares: cada sustancia con su dato. Juego de Enzo.",
             onClick = onMemotestClick
         )
+        Spacer(Modifier.height(16.dp))
+        TarjetaJuego(
+            titulo = "La Previa",
+            descripcion = "Una noche, tus decisiones. Elegí cómo reaccionar y mirá a dónde te lleva.",
+            onClick = onLaPreviaClick
+        )
     }
 }
 
@@ -59,6 +66,6 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenPreview() {
     TPJuegoTheme {
-        HomeScreen(onMitoORealidadClick = {}, onMemotestClick = {}, onVerIntro = {})
+        HomeScreen(onMitoORealidadClick = {}, onMemotestClick = {}, onLaPreviaClick = {}, onVerIntro = {})
     }
 }

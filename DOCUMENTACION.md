@@ -9,10 +9,10 @@ Repositorio: https://github.com/stephaniemelisav/InmuneGame
 
 | | |
 |---|---|
-| **Nombre** | **InmuneGame**, una app con dos juegos: **¿Mito o Realidad?** y **Memotest** |
+| **Nombre** | **InmuneGame**, una app con tres juegos: **¿Mito o Realidad?**, **Memotest** y **La Previa** |
 | **Objetivo** | Entrenar el hábito de *dudar antes de creer* lo que circula entre pares sobre el consumo de sustancias, con información de fuentes confiables (SEDRONAR / Observatorio Argentino de Drogas, Sociedad Argentina de Pediatría). No busca retar ni moralizar. |
 | **Público destinatario** | Adolescentes de 15 a 17 años, en clase y con la guía de una docente. Persona usuaria: Valentina, 16 años (ver [design-system.md](design-system.md)). |
-| **Mecánica principal** | **¿Mito o Realidad?**: se leen 5 afirmaciones elegidas al azar de un banco y se decide si cada una es *Realidad (Verdadero)* o *Mito (Falso)*. Después de cada respuesta, acierte o no, aparece una explicación con su fuente. **Memotest**: hay que dar vuelta cartas de a dos para unir cada sustancia con un dato sobre sus efectos (6 pares). |
+| **Mecánica principal** | **¿Mito o Realidad?**: se leen 5 afirmaciones elegidas al azar de un banco y se decide si cada una es *Realidad (Verdadero)* o *Mito (Falso)*. Después de cada respuesta, acierte o no, aparece una explicación con su fuente. **Memotest**: hay que dar vuelta cartas de a dos para unir cada sustancia con un dato sobre sus efectos (6 pares). **La Previa**: una historia en 6 escenas (una noche de previa) donde se elige cómo reaccionar ante la presión del grupo; cada decisión muestra una consecuencia y un recurso, y algunas llevan a escenas distintas. No hay puntaje ni "final malo". |
 | **Interacción** | Solo toques, con una mano. Botones grandes (58 dp) en el tercio inferior de la pantalla. No hay reloj ni vidas, no hay que registrarse y no se piden datos personales. |
 | **Recorrido de la partida** | Intro de concientización → menú de juegos → elige un juego → juega (con contador de aciertos y errores, o de intentos y pares) → pantalla final con resumen de resultados → **"Jugar de nuevo"** o **"Terminar y volver al menú"**. |
 
@@ -65,14 +65,16 @@ El detalle narrativo de una partida está en [relato.md](relato.md).
 | Cómo se juega | `ui/screens/ComoSeJuegaScreen.kt` | Tres pasos cortos antes de jugar. |
 | Pregunta / Resultado / Final | `ui/screens/GameScreen.kt` | Una sola pantalla que cambia de fase según el estado de la partida. |
 | Memotest | `ui/screens/MemotestScreen.kt` | Tablero, contador y pantalla final. |
+| La Previa | `ui/screens/LaPreviaScreen.kt` | Portada, escena con opciones, consecuencia con recurso y final con recorrido. Una sola pantalla que cambia de fase según el estado de la historia. |
 
-La app tiene **tres Activities**, una para el menú y una por juego:
+La app tiene **cuatro Activities**, una para el menú y una por juego:
 
 | Activity | Pantallas que contiene | Cómo se llega |
 |---|---|---|
 | `MainActivity` | Intro y menú de juegos | Al abrir la app |
 | `MitoORealidadActivity` | Portada, cómo se juega, pregunta, resultado y final | Desde el menú, con un `Intent` |
 | `MemotestActivity` | Memotest (tablero y final) | Desde el menú, con un `Intent` |
+| `LaPreviaActivity` | La Previa (portada, escenas, consecuencias y final) | Desde el menú, con un `Intent` |
 
 Dentro de cada Activity, la navegación entre pantallas se define en `ui/AppNavigation.kt` (`AppNavigation()` para el menú y `MitoORealidadNavigation()` para ¿Mito o Realidad?).
 
@@ -112,11 +114,12 @@ Como `Partida` no depende de Android, sus reglas se prueban con **tests unitario
 - La fase de la pantalla sale del estado: si todavía no respondió se muestra la **pregunta**, si ya respondió se muestra el **resultado** y si terminó se muestra el **final**.
 - Se guarda la lista de respuestas dadas, y de ahí salen el contador de aciertos y errores y el resumen pregunta por pregunta.
 - Los toques repetidos se ignoran: solo cuenta la primera respuesta de cada pregunta.
+- **La Previa:** la historia es un grafo de escenas (`data/LaPreviaHistoria.kt`): cada opción indica el `id` de la escena siguiente, y los caminos se separan y se vuelven a juntar. `Historia` (Kotlin puro e inmutable, como `Partida`) guarda la escena actual, la opción elegida y el recorrido; `LaPreviaViewModel` la expone como `StateFlow`. Los tests (`HistoriaTest`) verifican que todas las opciones lleven a escenas que existen y que todos los caminos terminen.
 - **Memotest:** maneja su estado dentro de la pantalla con `remember` y `mutableStateOf` (cartas, selección actual e intentos), y usa `LaunchedEffect` para comparar las dos cartas dadas vuelta.
 
 ### Ciclo de vida de las Activities
 
-- La app tiene **tres Activities**: `MainActivity` (intro y menú), `MitoORealidadActivity` y `MemotestActivity` (una por juego). Todas heredan de `BaseActivity`.
+- La app tiene **cuatro Activities**: `MainActivity` (intro y menú), `MitoORealidadActivity`, `MemotestActivity` y `LaPreviaActivity` (una por juego). Todas heredan de `BaseActivity`.
 - **Abrir un juego:** el menú lanza la Activity del juego con un `Intent` (`startActivity`). `MainActivity` pasa a `onPause` y `onStop`, pero queda en la pila.
 - **"Terminar y volver al menú":** la Activity del juego llama a `finish()`, pasa por `onPause`, `onStop` y `onDestroy`, y Android vuelve a mostrar `MainActivity` (`onRestart`, `onStart`, `onResume`) en el mismo estado en que estaba.
 - **Registro del ciclo de vida:** `BaseActivity` escribe en el **Logcat** cada callback (`onCreate`, `onStart`, `onResume`, `onPause`, `onStop`, `onRestart`, `onDestroy`), con el filtro `CicloDeVida`. Así se puede ver en vivo qué pasa con cada Activity al entrar y salir de los juegos.
@@ -152,15 +155,32 @@ Como `Partida` no depende de Android, sus reglas se prueban con **tests unitario
 | VideoView (`AndroidView`) | — | Video de la intro |
 | JUnit | 4.13.2 | Tests unitarios |
 
+### Fuentes de La Previa
+
+Cada recurso que aparece en La Previa muestra su fuente en pantalla. Estos son los documentos de los que sale cada uno:
+
+| Recurso del juego | Fuente |
+|---|---|
+| Decir «no, gracias» de forma firme, poner una excusa, repetir el no o cambiar de tema | Academia Americana de Pediatría (AAP), *Helping Teens Resist Pressure to Try Drugs*: https://www.healthychildren.org/English/ages-stages/teen/substance-abuse/Pages/Helping-Teens-Resist-Pressure-to-Try-Drugs.aspx |
+| Alejarse de la situación | SAMHSA (EE. UU.), campaña *Talk. They Hear You.*: https://library.samhsa.gov/sites/default/files/pep23-03-01-006.pdf |
+| No se puede saber qué contiene una pastilla | SEDRONAR, «Cada vez es más difícil asegurar que cuando una persona está consumiendo una pastilla eso sea éxtasis» (2017): https://www.argentina.gob.ar/noticias/cada-vez-es-mas-dificil-asegurar-que-cuando-una-persona-esta-consumiendo-una-pastilla-eso-0 |
+| No dejar sola a una persona intoxicada, buscar a un adulto responsable y llamar a emergencias | SEDRONAR, recomendaciones por el Día de las y los Estudiantes: https://www.argentina.gob.ar/noticias/recomendaciones-de-la-sedronar-por-los-festejos-en-el-pais-del-dia-de-las-y-los-estudiantes |
+| Acostar de costado (posición de recuperación) para evitar que se ahogue con el vómito | Ministerio de Salud de la Nación, primeros auxilios: https://www.argentina.gob.ar/salud/primerosauxilios/posiciondeseguridad |
+| 107 (ambulancias del SAME, CABA) y 911 | Gobierno de la Ciudad de Buenos Aires, teléfonos útiles: https://buenosaires.gob.ar/gcaba_historico/jefaturadegabinete/telefonos-utiles |
+| Alcohol al volante y riesgo de siniestros | Agencia Nacional de Seguridad Vial, Observatorio Vial: https://www.argentina.gob.ar/seguridadvial/observatoriovialnacional/el-consumo-de-alcohol-y-la-seguridad-vial |
+| Línea 141: gratuita, anónima, las 24 horas | SEDRONAR: https://www.argentina.gob.ar/noticias/se-modifico-la-leyenda-de-la-linea-141-de-la-sedronar-para-los-medios-de-comunicacion y https://x.com/Sedronar/status/1357052903232393216 |
+
+Las estrategias para decir que no salen de fuentes de pediatría y salud de EE. UU. (AAP y SAMHSA), porque las fuentes argentinas consultadas no las detallan. El resto de los datos son de organismos argentinos.
+
 ---
 
 ## E. Participación de los integrantes
 
-El juego **¿Mito o Realidad?** se desarrolló de manera **colaborativa** entre los tres integrantes. Cada uno aportó desde su rol, y además Enzo desarrolló el segundo juego, el **Memotest**.
+El juego **¿Mito o Realidad?** se desarrolló de manera **colaborativa** entre los tres integrantes. Cada uno aportó desde su rol, y además Enzo desarrolló el segundo juego, el **Memotest**, y Stephanie el tercero, **La Previa**.
 
 | Integrante | Rol en el equipo | Tareas realizadas |
 |---|---|---|
-| **Stephanie Velarde** | Diseño y estructura del proyecto | Participó en el desarrollo colaborativo de **¿Mito o Realidad?**: definió la experiencia del juego en el **relato de la partida** (`relato.md`) y diseñó su **Design System** (`design-system.md`: persona usuaria, paleta con contrastes verificados, tipografías y botones, con sus imágenes en `img/`). Creó el repositorio, la estructura inicial del proyecto Android (Gradle, navegación y pantallas base) y el README. |
+| **Stephanie Velarde** | Diseño y estructura del proyecto | Participó en el desarrollo colaborativo de **¿Mito o Realidad?**: definió la experiencia del juego en el **relato de la partida** (`relato.md`) y diseñó su **Design System** (`design-system.md`: persona usuaria, paleta con contrastes verificados, tipografías y botones, con sus imágenes en `img/`). Creó el repositorio, la estructura inicial del proyecto Android (Gradle, navegación y pantallas base) y el README. Desarrolló el tercer juego, **La Previa** (rama `dev-meli`): la historia ramificada con sus escenas, consecuencias y recursos, la lógica (`Historia`, ViewModel y tests) y sus pantallas. |
 | **Gonzalo Giri Petray** | Desarrollo e integración de la app | Participó en el desarrollo colaborativo de **¿Mito o Realidad?**: programó la lógica (`Partida`, ViewModel y tests) y las pantallas de portada, cómo se juega, pregunta, resultado y final. Hizo la **intro multimedia**, el contador de aciertos y errores, el resumen y el historial de partidas. Aplicó el Design System en código (tema, tipografías y componentes) e integró el Memotest al menú de la app. |
 | **Enzo Páez** | Desarrollo del Memotest | Participó en el desarrollo colaborativo de **¿Mito o Realidad?**, colaborando en el **prototipo en Figma**. Desarrolló el segundo juego, el **Memotest** (rama `dev-enzo`): cartas, parejas sustancia/dato, lógica de comparación de cartas y contador de intentos. |
 
