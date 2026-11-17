@@ -29,9 +29,9 @@ import com.example.tpjuego.ui.theme.Blanco
 import com.example.tpjuego.ui.theme.TPJuegoTheme
 
 private val pasos = listOf(
-    "Leé la afirmación.",
-    "Elegí si es Verdadero (realidad) o Falso (mito).",
-    "Leé la explicación antes de seguir: equivocarse también enseña."
+    "Leé la frase: tenés 10 segundos.",
+    "Tocá Verdadero o Falso, o incliná el celu.",
+    "Mirá la explicación y seguí."
 )
 
 // Pantalla "Cómo se juega": tres pasos cortos antes de la primera pregunta.

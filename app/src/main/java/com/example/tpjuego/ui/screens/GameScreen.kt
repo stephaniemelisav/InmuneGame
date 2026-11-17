@@ -18,7 +18,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.tpjuego.game.EventoReloj
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +39,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tpjuego.data.AfirmacionesRepositorio
 import com.example.tpjuego.data.ResultadoGuardado
 import com.example.tpjuego.game.MitoORealidadViewModel
+import com.example.tpjuego.game.Movimiento
+import com.example.tpjuego.ui.multimedia.EscucharMovimiento
+import com.example.tpjuego.ui.multimedia.rememberEfectos
+import com.example.tpjuego.ui.theme.Amarillo
 import com.example.tpjuego.game.Partida
 import com.example.tpjuego.game.RespuestaDada
 import com.example.tpjuego.ui.components.BarraProgreso
@@ -66,6 +76,61 @@ fun GameScreen(
 ) {
     val partida by viewModel.partida.collectAsState()
     val anteriores by viewModel.partidasAnteriores.collectAsState()
+    val segundos by viewModel.segundosRestantes.collectAsState()
+    val efectos = rememberEfectos()
+
+    // Reloj: corre solo con la pantalla en primer plano (se frena en onPause).
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, evento ->
+            when (evento) {
+                Lifecycle.Event.ON_RESUME -> viewModel.arrancarReloj()
+                Lifecycle.Event.ON_PAUSE -> viewModel.pausarReloj()
+                else -> Unit
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            viewModel.pausarReloj()
+        }
+    }
+
+    // Tic cada segundo; si se acaba el tiempo, cuenta como error: suena y vibra.
+    LaunchedEffect(viewModel) {
+        viewModel.eventosReloj.collect { evento ->
+            when (evento) {
+                is EventoReloj.Tic -> efectos.sonarTic(urgente = evento.segundosRestantes <= 3)
+                EventoReloj.SeAcaboElTiempo -> {
+                    efectos.sonarError()
+                    efectos.vibrar()
+                }
+            }
+        }
+    }
+
+    // Responder con sonido; si se equivoca, además vibra.
+    val responder: (Boolean) -> Unit = { eligioRealidad ->
+        if (!viewModel.partida.value.respondida) {
+            viewModel.responder(eligioRealidad)
+            if (viewModel.partida.value.acerto == true) {
+                efectos.sonarAcierto()
+            } else {
+                efectos.sonarError()
+                efectos.vibrar()
+            }
+        }
+    }
+
+    // Sensor: inclinar el celular a la derecha = Verdadero, a la izquierda = Falso.
+    // Solo escucha mientras hay una pregunta sin responder.
+    EscucharMovimiento(activo = !partida.terminada && !partida.respondida) { movimiento ->
+        when (movimiento) {
+            Movimiento.INCLINAR_DERECHA -> responder(true)
+            Movimiento.INCLINAR_IZQUIERDA -> responder(false)
+            Movimiento.SACUDIR -> Unit
+        }
+    }
 
     Crossfade(targetState = partida, label = "fase de la partida") { p ->
         when {
@@ -75,8 +140,11 @@ fun GameScreen(
                 onJugarDeNuevo = viewModel::jugarDeNuevo,
                 onTerminar = onTerminar
             )
-            p.respuesta == null -> PreguntaContent(p, onResponder = viewModel::responder)
-            else -> ResultadoContent(p, onSiguiente = viewModel::siguiente)
+            !p.respondida -> PreguntaContent(p, segundos = segundos, onResponder = responder)
+            else -> ResultadoContent(p, onSiguiente = {
+                viewModel.siguiente()
+                if (viewModel.partida.value.terminada) efectos.sonarFin()
+            })
         }
     }
 }
@@ -92,7 +160,7 @@ private fun BarraDePartida(partida: Partida) {
 }
 
 @Composable
-private fun PreguntaContent(partida: Partida, onResponder: (Boolean) -> Unit) {
+private fun PreguntaContent(partida: Partida, segundos: Int, onResponder: (Boolean) -> Unit) {
     PantallaDegradado {
         BarraDePartida(partida)
         Column(
@@ -102,11 +170,15 @@ private fun PreguntaContent(partida: Partida, onResponder: (Boolean) -> Unit) {
                 .verticalScroll(rememberScrollState())
         ) {
             Spacer(Modifier.height(24.dp))
-            Text(
-                text = "¿VERDADERO O FALSO?",
-                style = MaterialTheme.typography.headlineLarge,
-                color = Blanco
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "¿VERDADERO O FALSO?",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = Blanco,
+                    modifier = Modifier.weight(1f)
+                )
+                Reloj(segundos)
+            }
             Spacer(Modifier.height(16.dp))
             Tarjeta {
                 Text(
@@ -123,6 +195,19 @@ private fun PreguntaContent(partida: Partida, onResponder: (Boolean) -> Unit) {
             }
             Spacer(Modifier.height(16.dp))
         }
+        // Ayuda del sensor: cada lado del celular muestra a qué respuesta corresponde.
+        Text(
+            text = "O INCLINÁ EL CELU",
+            style = MaterialTheme.typography.labelMedium,
+            color = Amarillo,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text("← FALSO", style = MaterialTheme.typography.labelMedium, color = Blanco, modifier = Modifier.weight(1f))
+            Text("VERDADERO →", style = MaterialTheme.typography.labelMedium, color = Blanco)
+        }
+        Spacer(Modifier.height(10.dp))
         // Verde y rojo nunca van solos: cada botón lleva ícono y texto.
         BotonOpcion("✓  Verdadero", fondo = VerdeVerdadero, onClick = { onResponder(true) })
         Spacer(Modifier.height(12.dp))
@@ -149,7 +234,11 @@ private fun ResultadoContent(partida: Partida, onSiguiente: () -> Unit) {
             Spacer(Modifier.height(16.dp))
             Text(
                 // El error no se vive como castigo: el foco está en la explicación.
-                text = if (acerto) "¡RESPUESTA CORRECTA!" else "ESTA VEZ NO",
+                text = when {
+                    acerto -> "¡RESPUESTA CORRECTA!"
+                    partida.sinTiempo -> "¡SE ACABÓ EL TIEMPO!"
+                    else -> "ESTA VEZ NO"
+                },
                 style = MaterialTheme.typography.headlineLarge,
                 color = Blanco,
                 textAlign = TextAlign.Center
@@ -160,7 +249,7 @@ private fun ResultadoContent(partida: Partida, onSiguiente: () -> Unit) {
             Tarjeta {
                 Text(
                     text = "“${afirmacion.texto}”",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(Modifier.height(12.dp))
@@ -177,6 +266,27 @@ private fun ResultadoContent(partida: Partida, onSiguiente: () -> Unit) {
         BotonPrimario(
             texto = if (partida.esUltima) "Ver mi resultado" else "Siguiente",
             onClick = onSiguiente
+        )
+    }
+}
+
+/** Cuenta regresiva: número grande en un círculo. Los últimos 3 segundos se pone naranja. */
+@Composable
+private fun Reloj(segundos: Int) {
+    val urgente = segundos <= 3
+    Box(
+        modifier = Modifier
+            .size(64.dp)
+            .clip(CircleShape)
+            .background(if (urgente) NaranjaEstado else Blanco)
+            .semantics { contentDescription = "Quedan $segundos segundos" },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "$segundos",
+            fontFamily = Staatliches,
+            fontSize = 36.sp,
+            color = if (urgente) Blanco else AzulNoche
         )
     }
 }
@@ -244,18 +354,12 @@ private fun FinalContent(
                     Spacer(Modifier.width(24.dp))
                     Contador(partida.errores, if (partida.errores == 1) "error" else "errores", acerto = false)
                 }
-                Spacer(Modifier.height(16.dp))
-                Text(
-                    text = "Esto es lo que sabés hoy. Cada explicación que leíste suma.",
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center
-                )
             }
             Spacer(Modifier.height(16.dp))
 
             // Resumen pregunta por pregunta.
             Tarjeta {
-                Text(text = "RESUMEN DE TUS RESPUESTAS", style = MaterialTheme.typography.titleSmall)
+                Text(text = "TUS RESPUESTAS", style = MaterialTheme.typography.titleSmall)
                 partida.respuestas.forEachIndexed { i, respuesta ->
                     Spacer(Modifier.height(12.dp))
                     if (i > 0) {
@@ -280,17 +384,8 @@ private fun FinalContent(
 
             Spacer(Modifier.height(24.dp))
             Text(
-                text = "Para distinguir mitos de realidades, informate en fuentes confiables " +
-                    "como SEDRONAR o la Sociedad Argentina de Pediatría.",
+                text = "¿Querés hablar? Línea 141 · gratis y anónima, 24 h",
                 style = MaterialTheme.typography.bodyLarge,
-                color = Blanco,
-                textAlign = TextAlign.Center
-            )
-            Spacer(Modifier.height(12.dp))
-            Text(
-                text = "¿Querés hablar con alguien? Línea 141 de SEDRONAR: gratuita, anónima " +
-                    "y las 24 horas.",
-                style = MaterialTheme.typography.bodyMedium,
                 color = Blanco,
                 textAlign = TextAlign.Center
             )
@@ -320,7 +415,11 @@ private fun FilaResumen(respuesta: RespuestaDada) {
             Text(text = respuesta.afirmacion.texto, style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(4.dp))
             Text(
-                text = "Respondiste ${if (respuesta.eligioRealidad) "VERDADERO" else "FALSO"} · " +
+                text = when (respuesta.eligioRealidad) {
+                    null -> "SIN TIEMPO"
+                    true -> "RESPONDISTE VERDADERO"
+                    false -> "RESPONDISTE FALSO"
+                } + " · " +
                     if (respuesta.afirmacion.esRealidad) "ERA REALIDAD" else "ERA UN MITO",
                 style = MaterialTheme.typography.labelMedium,
                 color = if (respuesta.acerto) VerdeEstado else NaranjaEstado
@@ -361,7 +460,7 @@ private fun partidaTerminadaEjemplo(): Partida {
 @Preview(showSystemUi = true, name = "Pregunta")
 @Composable
 private fun PreguntaPreview() {
-    TPJuegoTheme { PreguntaContent(partidaEjemplo, onResponder = {}) }
+    TPJuegoTheme { PreguntaContent(partidaEjemplo, segundos = 7, onResponder = {}) }
 }
 
 @Preview(showSystemUi = true, name = "Acierto")

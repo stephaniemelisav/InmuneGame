@@ -20,7 +20,7 @@ val Inter = FontFamily(
 )
 
 // Staatliches: textos cortos y grandes. Inter: todo lo que tenga más de una línea.
-// Ningún texto baja de 16 sp.
+// Ningún texto baja de 17 sp (se agrandó para que se lea mejor en el celular).
 val Typography = Typography(
     // Título de la app: ¿MITO O REALIDAD?
     displayLarge = TextStyle(fontFamily = Staatliches, fontSize = 68.sp, lineHeight = 68.sp),
@@ -30,19 +30,19 @@ val Typography = Typography(
     headlineMedium = TextStyle(fontFamily = Staatliches, fontSize = 28.sp, lineHeight = 32.sp),
     // Afirmación a evaluar
     headlineSmall = TextStyle(
-        fontFamily = Inter, fontWeight = FontWeight.SemiBold, fontSize = 22.sp, lineHeight = 30.sp
+        fontFamily = Inter, fontWeight = FontWeight.SemiBold, fontSize = 24.sp, lineHeight = 32.sp
     ),
     // Subtítulo
     titleMedium = TextStyle(
-        fontFamily = Inter, fontWeight = FontWeight.SemiBold, fontSize = 20.sp, lineHeight = 28.sp
+        fontFamily = Inter, fontWeight = FontWeight.SemiBold, fontSize = 21.sp, lineHeight = 29.sp
     ),
     // Etiquetas: JUEGO DE PREGUNTAS / ES UN MITO · FALSO
     titleSmall = TextStyle(
-        fontFamily = Staatliches, fontSize = 18.sp, lineHeight = 22.sp, letterSpacing = 1.sp
+        fontFamily = Staatliches, fontSize = 20.sp, lineHeight = 24.sp, letterSpacing = 1.sp
     ),
     // Indicador de progreso: PREGUNTA 1 DE 5
     labelMedium = TextStyle(
-        fontFamily = Staatliches, fontSize = 16.sp, lineHeight = 20.sp, letterSpacing = 1.sp
+        fontFamily = Staatliches, fontSize = 18.sp, lineHeight = 22.sp, letterSpacing = 1.sp
     ),
     // Texto de botones
     labelLarge = TextStyle(
@@ -50,9 +50,9 @@ val Typography = Typography(
     ),
     // Explicaciones y cuerpo
     bodyLarge = TextStyle(
-        fontFamily = Inter, fontWeight = FontWeight.Normal, fontSize = 18.sp, lineHeight = 26.sp
+        fontFamily = Inter, fontWeight = FontWeight.Normal, fontSize = 19.sp, lineHeight = 28.sp
     ),
     bodyMedium = TextStyle(
-        fontFamily = Inter, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 24.sp
+        fontFamily = Inter, fontWeight = FontWeight.Normal, fontSize = 17.sp, lineHeight = 25.sp
     )
 )

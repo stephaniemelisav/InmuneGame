@@ -83,4 +83,16 @@ class PartidaTest {
         assertEquals(lista, HistorialCodec.decodificar(HistorialCodec.codificar(lista)))
         assertEquals(emptyList<ResultadoGuardado>(), HistorialCodec.decodificar(""))
     }
+
+    @Test
+    fun siSeAcabaElTiempoCuentaComoError() {
+        val p = Partida(listOf(mito, realidad)).sinTiempo()
+        assertTrue(p.respondida)
+        assertTrue(p.sinTiempo)
+        assertEquals(false, p.acerto)
+        assertEquals(1, p.errores)
+        // Después de que se acabó el tiempo ya no se puede responder esa pregunta.
+        assertEquals(1, p.responder(false).respuestas.size)
+        assertEquals(1, p.siguiente().indice)
+    }
 }

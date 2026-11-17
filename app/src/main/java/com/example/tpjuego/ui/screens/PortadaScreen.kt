@@ -55,7 +55,7 @@ fun PortadaScreen(onComenzar: () -> Unit, onVolver: () -> Unit) {
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "Sin reloj y sin vidas: tomate tu tiempo para pensar.",
+                    text = "10 segundos por frase.",
                     style = MaterialTheme.typography.bodyLarge
                 )
             }

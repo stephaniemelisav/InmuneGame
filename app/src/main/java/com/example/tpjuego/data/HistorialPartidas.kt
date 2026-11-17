@@ -4,11 +4,12 @@ import android.content.Context
 
 /**
  * Historial de partidas de ¿Mito o Realidad? guardado en el celular (SharedPreferences).
- * No pide registro ni datos personales: solo fecha y puntaje.
+ * Se guarda por usuario. Solo fecha y puntaje, sin datos personales.
  */
-class HistorialPartidas(context: Context) {
+class HistorialPartidas(context: Context, usuario: String) {
 
-    private val prefs = context.getSharedPreferences(ARCHIVO, Context.MODE_PRIVATE)
+    // Un archivo por usuario: cada uno ve solo sus partidas.
+    private val prefs = context.getSharedPreferences("${ARCHIVO}_$usuario", Context.MODE_PRIVATE)
 
     /** Las partidas guardadas, de la más reciente a la más vieja. */
     fun leer(): List<ResultadoGuardado> =
