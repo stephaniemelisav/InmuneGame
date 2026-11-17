@@ -6,11 +6,11 @@ data class Tema(val nombre: String, val nota: String)
 /** Datos del Memotest (juego de Enzo). */
 object MemotestTemas {
     val temas = listOf(
-        Tema("Alcohol", "El alcohol deprime el sistema nervioso central y altera los reflejos y el juicio."),
-        Tema("Tabaco", "La nicotina genera alta dependencia."),
-        Tema("Marihuana", "La marihuana afecta la memoria y la atención."),
-        Tema("Energizante + alcohol", "Mezclar energizante con alcohol disimula la intoxicación y es muy riesgoso."),
-        Tema("Cocaína", "La cocaína aumenta el riesgo de problemas cardíacos."),
-        Tema("Pedir ayuda", "Hablar con una persona de confianza es el primer paso para cuidarte.")
+        Tema("Heroína", "Es un opioide que afecta el sistema nervioso. Puede causar dependencia, pérdida de conciencia y sobredosis mortal por detener la respiración."),
+        Tema("Metanfetamina", "Es un potente estimulante. Puede provocar insomnio, paranoia, problemas cardíacos y daños en el cerebro."),
+        Tema("LSD", "Es una droga alucinógena que altera la percepción y los sentidos. Puede provocar pánico, confusión y episodios de ansiedad intensa."),
+        Tema("Éxtasis", "Altera el estado de ánimo y la percepción. Puede causar deshidratación, aumento peligroso de la temperatura corporal y problemas cardíacos."),
+        Tema("Cocaína", "Es un estimulante que acelera el sistema nervioso. Puede provocar ansiedad, taquicardia, adicción e infartos."),
+        Tema("Crack", "Es una forma de cocaína de efecto muy rápido. Puede generar una fuerte dependencia, ansiedad, daños pulmonares y problemas cardiovasculares.")
     )
 }
