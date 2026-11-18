@@ -10,6 +10,8 @@ import com.example.tpjuego.ui.screens.IntroScreen
 import com.example.tpjuego.ui.screens.PortadaScreen
 import com.example.tpjuego.ui.screens.RankingScreen
 import com.example.tpjuego.ui.screens.ResumenScreen
+import com.example.tpjuego.R  // <- NUEVO
+import com.example.tpjuego.ui.components.MusicaDeFondo  // <- NUEVO
 
 // Rutas de cada Activity. La app tiene cinco Activities:
 //  - LoginActivity:         ingreso con usuario y contraseña
@@ -37,6 +39,8 @@ fun AppNavigation(
 ) {
     val navController = rememberNavController()
 
+    MusicaDeFondo(R.raw.music6)
+
     NavHost(navController = navController, startDestination = Routes.INTRO) {
         composable(Routes.INTRO) {
             IntroScreen(
@@ -51,6 +55,7 @@ fun AppNavigation(
             )
         }
         composable(Routes.MENU) {
+
             HomeScreen(
                 usuario = usuario,
                 onMitoORealidadClick = onAbrirMitoORealidad,
