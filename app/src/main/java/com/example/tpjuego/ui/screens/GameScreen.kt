@@ -76,9 +76,16 @@ fun GameScreen(
     onTerminar: () -> Unit,
     viewModel: MitoORealidadViewModel = viewModel()
 ) {
-    MusicaDeFondo(R.raw.music3)   // <- NUEVO
-
     val partida by viewModel.partida.collectAsState()
+
+    MusicaDeFondo(
+        recurso = if (partida.terminada)
+            R.raw.juegocompletado1
+        else
+            R.raw.music3,
+        enBucle = !partida.terminada
+    )
+
     val anteriores by viewModel.partidasAnteriores.collectAsState()
     val segundos by viewModel.segundosRestantes.collectAsState()
     val efectos = rememberEfectos()

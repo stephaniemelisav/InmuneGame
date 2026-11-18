@@ -68,7 +68,13 @@ fun LaPreviaScreen(
         return
     }
 
-    MusicaDeFondo(R.raw.music4)   // <- NUEVO
+    MusicaDeFondo(
+        recurso = if (historia.terminada)
+            R.raw.juegocompletado1
+        else
+            R.raw.music4,
+        enBucle = !historia.terminada
+    )
 
     Crossfade(targetState = historia, label = "fase de la historia") { h ->
         when {
