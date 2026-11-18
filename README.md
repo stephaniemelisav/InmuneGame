@@ -12,9 +12,9 @@ La documentación completa del desarrollo está en [DOCUMENTACION.md](DOCUMENTAC
 
 | Integrante | Rol | Tareas realizadas |
 |---|---|---|
-| Stephanie Velarde | Diseño y estructura del proyecto | Ver [DOCUMENTACION.md → E](DOCUMENTACION.md#e-participación-de-los-integrantes) |
-| Gonzalo Giri Petray | Desarrollo e integración de la app | Ver [DOCUMENTACION.md → E](DOCUMENTACION.md#e-participación-de-los-integrantes) |
-| Enzo Páez | Desarrollo del Memotest | Ver [DOCUMENTACION.md → E](DOCUMENTACION.md#e-participación-de-los-integrantes) |
+| Gonzalo Giri Petray | Desarrollo e integración | ¿Mito o Realidad? (lógica, pantallas, cronómetro y sensor), base de datos local con **Room**, **Ranking** con Firebase e integración de los tres juegos en la app. |
+| Stephanie Velarde | Diseño y estructura | **Design System** y relato de la partida, repositorio y estructura del proyecto, y el juego **La Previa** (historia, lógica y pantallas). |
+| Enzo Páez | Desarrollo del Memotest | Prototipo en **Figma**, el **Memotest** completo (cartas, sustancias, notas, animaciones y pantalla final) y la música de fondo de los tres juegos. |
 
 ## Los juegos
 
