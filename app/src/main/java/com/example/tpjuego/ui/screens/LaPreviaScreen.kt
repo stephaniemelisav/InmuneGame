@@ -47,6 +47,8 @@ import com.example.tpjuego.ui.theme.Blanco
 import com.example.tpjuego.ui.theme.BlancoTranslucido
 import com.example.tpjuego.ui.theme.TPJuegoTheme
 import com.example.tpjuego.ui.theme.Turquesa
+import com.example.tpjuego.R  // <- NUEVO
+import com.example.tpjuego.ui.components.MusicaDeFondo  // <- NUEVO
 
 // La Previa: historia en escenas donde cada decisión lleva a su camino.
 // La lógica vive en Historia/ViewModel; acá solo se dibuja según el estado.
@@ -61,9 +63,12 @@ fun LaPreviaScreen(
     val empezo by viewModel.empezo.collectAsState()
 
     if (!empezo) {
+        MusicaDeFondo(R.raw.introduccion1)   // <- NUEVO
         PortadaLaPrevia(onComenzar = viewModel::comenzar, onVolver = onTerminar)
         return
     }
+
+    MusicaDeFondo(R.raw.music4)   // <- NUEVO
 
     Crossfade(targetState = historia, label = "fase de la historia") { h ->
         when {

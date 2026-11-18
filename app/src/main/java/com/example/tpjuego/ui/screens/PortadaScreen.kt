@@ -22,10 +22,14 @@ import com.example.tpjuego.ui.theme.Amarillo
 import com.example.tpjuego.ui.theme.AzulNoche
 import com.example.tpjuego.ui.theme.Blanco
 import com.example.tpjuego.ui.theme.TPJuegoTheme
+import com.example.tpjuego.R  // <- NUEVO
+import com.example.tpjuego.ui.components.MusicaDeFondo  // <- NUEVO
 
 // Portada de ¿Mito o Realidad?
 @Composable
 fun PortadaScreen(onComenzar: () -> Unit, onVolver: () -> Unit) {
+    MusicaDeFondo(R.raw.introduccion1)   // <- NUEVO
+
     PantallaDegradado {
         Column(
             modifier = Modifier
