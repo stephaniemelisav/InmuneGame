@@ -48,6 +48,8 @@ import com.example.tpjuego.ui.theme.Blanco
 import com.example.tpjuego.ui.theme.DegradeGeneral
 import com.example.tpjuego.ui.theme.TPJuegoTheme
 import com.example.tpjuego.ui.theme.Turquesa
+import com.example.tpjuego.ui.multimedia.rememberNarrador
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.cos
@@ -56,8 +58,8 @@ import kotlin.math.sin
 /**
  * Introducción multimedia de concientización, al abrir la app.
  *
- * - Si existe el archivo res/raw/intro.mp4, se reproduce ese video.
- * - Si no, se muestra una animación hecha con Compose.
+ * - Animación hecha con Compose, con una voz que lee cada mensaje (ver [Narrador]).
+ * - Si existe el archivo res/raw/intro.mp4, se reproduce ese video en su lugar.
  *
  * En los dos casos se puede saltear, y al terminar pasa al menú de juegos.
  */
@@ -138,6 +140,7 @@ private fun AnimacionIntro(onFin: () -> Unit) {
     val opacidad = remember { Animatable(0f) }
     val desplazamiento = remember { Animatable(24f) }
     val escala = remember { Animatable(0.7f) }
+    val narrador = rememberNarrador()
 
     LaunchedEffect(Unit) {
         for (i in escenas.indices) {
@@ -145,16 +148,22 @@ private fun AnimacionIntro(onFin: () -> Unit) {
             opacidad.snapTo(0f)
             desplazamiento.snapTo(24f)
             launch { desplazamiento.animateTo(0f, tween(700)) }
-            opacidad.animateTo(1f, tween(700))
-            delay(1600)
+            launch { opacidad.animateTo(1f, tween(700)) }
+            // El mensaje queda en pantalla mientras la voz lo lee (y al menos 2,3 s).
+            val voz = async { narrador.decir(escenas[i].replace("\n", " ")) }
+            delay(2300)
+            voz.await()
             opacidad.animateTo(0f, tween(450))
         }
         // Escena final: el logo con un rebote.
         escena = escenas.size
         opacidad.snapTo(0f)
         launch { escala.animateTo(1f, spring(dampingRatio = 0.45f, stiffness = 120f)) }
-        opacidad.animateTo(1f, tween(600))
+        launch { opacidad.animateTo(1f, tween(600)) }
+        val voz = async { narrador.decir("Inmune Game. Dudar antes de creer.") }
         delay(2000)
+        voz.await()
+        delay(600)
         fin()
     }
 

@@ -47,6 +47,8 @@ import com.example.tpjuego.ui.theme.Blanco
 import com.example.tpjuego.ui.theme.BlancoTranslucido
 import com.example.tpjuego.ui.theme.TPJuegoTheme
 import com.example.tpjuego.ui.theme.Turquesa
+import com.example.tpjuego.R  // <- NUEVO
+import com.example.tpjuego.ui.components.MusicaDeFondo  // <- NUEVO
 
 // La Previa: historia en escenas donde cada decisión lleva a su camino.
 // La lógica vive en Historia/ViewModel; acá solo se dibuja según el estado.
@@ -61,9 +63,12 @@ fun LaPreviaScreen(
     val empezo by viewModel.empezo.collectAsState()
 
     if (!empezo) {
+        MusicaDeFondo(R.raw.introduccion1)   // <- NUEVO
         PortadaLaPrevia(onComenzar = viewModel::comenzar, onVolver = onTerminar)
         return
     }
+
+    MusicaDeFondo(R.raw.music4)   // <- NUEVO
 
     Crossfade(targetState = historia, label = "fase de la historia") { h ->
         when {
@@ -92,23 +97,13 @@ private fun PortadaLaPrevia(onComenzar: () -> Unit, onVolver: () -> Unit) {
             Spacer(Modifier.height(16.dp))
             Text("LA PREVIA", style = MaterialTheme.typography.displayLarge, color = Blanco)
             Spacer(Modifier.height(8.dp))
-            Text(
-                "Una noche. Tus decisiones.",
-                style = MaterialTheme.typography.titleMedium,
-                color = Blanco
-            )
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(16.dp))
             Tarjeta {
                 Text(
-                    "Es sábado y hay previa. En ${LaPreviaHistoria.TOTAL_ESCENAS} escenas vas a " +
-                        "elegir cómo reaccionar.",
+                    "Sábado a la noche. ${LaPreviaHistoria.TOTAL_ESCENAS} escenas.",
                     style = MaterialTheme.typography.titleMedium
                 )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    "No hay respuestas buenas o malas: cada camino te muestra qué puede pasar.",
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                Text("Vos elegís qué hacer.", style = MaterialTheme.typography.bodyLarge)
             }
             Spacer(Modifier.height(16.dp))
         }
@@ -207,7 +202,7 @@ private fun BotonEleccion(letra: String, texto: String, onClick: () -> Unit) {
                 Text(letra, style = MaterialTheme.typography.titleSmall, color = Blanco)
             }
             Spacer(Modifier.width(12.dp))
-            Text(texto, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+            Text(texto, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -266,17 +261,12 @@ private fun FinalLaPrevia(historia: Historia, onJugarDeNuevo: () -> Unit, onTerm
             Spacer(Modifier.height(24.dp))
             Text("FIN DE LA NOCHE", style = MaterialTheme.typography.headlineLarge, color = Blanco)
             Spacer(Modifier.height(8.dp))
-            Text(
-                "Llegaste a casa. Así fue tu camino:",
-                style = MaterialTheme.typography.titleMedium,
-                color = Blanco
-            )
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(8.dp))
             Tarjeta {
                 Text("TU RECORRIDO", style = MaterialTheme.typography.titleSmall, color = Turquesa)
                 historia.recorrido.forEachIndexed { i, paso ->
                     Spacer(Modifier.height(8.dp))
-                    Text("${i + 1}. ${paso.opcion.resumen}", style = MaterialTheme.typography.bodyMedium)
+                    Text("${i + 1}. ${paso.opcion.resumen}", style = MaterialTheme.typography.bodyLarge)
                 }
             }
             Spacer(Modifier.height(16.dp))
@@ -284,17 +274,9 @@ private fun FinalLaPrevia(historia: Historia, onJugarDeNuevo: () -> Unit, onTerm
                 Etiqueta("LO QUE TE LLEVÁS", fondo = Amarillo, colorTexto = AzulNoche)
                 historia.recursos.forEach { recurso ->
                     Spacer(Modifier.height(10.dp))
-                    Text("• ${recurso.texto}", style = MaterialTheme.typography.bodyMedium)
+                    Text("• ${recurso.texto}", style = MaterialTheme.typography.bodyLarge)
                 }
             }
-            Spacer(Modifier.height(16.dp))
-            Text(
-                "Podés volver a jugar y elegir otro camino.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Blanco,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
             Spacer(Modifier.height(16.dp))
         }
         BotonPrimario("Jugar otro camino", onClick = onJugarDeNuevo)

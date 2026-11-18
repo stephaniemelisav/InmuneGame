@@ -2,8 +2,6 @@ package com.example.tpjuego.game
 
 import com.example.tpjuego.data.Afirmacion
 import com.example.tpjuego.data.AfirmacionesRepositorio
-import com.example.tpjuego.data.HistorialCodec
-import com.example.tpjuego.data.ResultadoGuardado
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -78,9 +76,14 @@ class PartidaTest {
     }
 
     @Test
-    fun historialSeGuardaYSeLeeIgual() {
-        val lista = listOf(ResultadoGuardado(1_000L, 4, 5), ResultadoGuardado(500L, 2, 5))
-        assertEquals(lista, HistorialCodec.decodificar(HistorialCodec.codificar(lista)))
-        assertEquals(emptyList<ResultadoGuardado>(), HistorialCodec.decodificar(""))
+    fun siSeAcabaElTiempoCuentaComoError() {
+        val p = Partida(listOf(mito, realidad)).sinTiempo()
+        assertTrue(p.respondida)
+        assertTrue(p.sinTiempo)
+        assertEquals(false, p.acerto)
+        assertEquals(1, p.errores)
+        // Después de que se acabó el tiempo ya no se puede responder esa pregunta.
+        assertEquals(1, p.responder(false).respuestas.size)
+        assertEquals(1, p.siguiente().indice)
     }
 }

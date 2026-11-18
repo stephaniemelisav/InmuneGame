@@ -2,6 +2,13 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+}
+
+// Firebase: el plugin lee app/google-services.json (se descarga de la consola de Firebase).
+// Si el archivo todavía no está, la app compila igual y guarda las partidas solo en el celular.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
 }
 
 android {
@@ -43,6 +50,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)   // LocalLifecycleOwner (sensor según el ciclo de vida)
     implementation(libs.androidx.activity.compose)
 
     // Compose: el BOM fija versiones compatibles entre sí
@@ -52,6 +60,15 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+
+    // Base de datos local: Room sobre SQLite (KSP genera el código de los DAO).
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    // Base de datos externa: Cloud Firestore (Firebase). El BOM fija la versión.
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -1,6 +1,12 @@
 package com.example.tpjuego.game
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.tpjuego.data.Juego
+import com.example.tpjuego.data.PartidasRepository
+import com.example.tpjuego.data.Sesion
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -8,7 +14,11 @@ import kotlinx.coroutines.flow.update
 
 // Igual que en ¿Mito o Realidad?: el ViewModel sobrevive a la rotación de pantalla,
 // así la historia no vuelve a empezar al girar el celular.
-class LaPreviaViewModel : ViewModel() {
+// Es AndroidViewModel para poder guardar la partida en la base local (Room).
+class LaPreviaViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val repositorio = PartidasRepository(application)
+    private val usuario = Sesion.usuarioOInvitado(application)
 
     private val _historia = MutableStateFlow(Historia())
     val historia: StateFlow<Historia> = _historia.asStateFlow()
@@ -26,7 +36,15 @@ class LaPreviaViewModel : ViewModel() {
     }
 
     fun seguir() {
-        _historia.update { it.seguir() }
+        val antes = _historia.value
+        val despues = antes.seguir()
+        _historia.value = despues
+        // Al terminar la historia, se suma una partida al resumen (resultado = decisiones tomadas).
+        if (!antes.terminada && despues.terminada) {
+            viewModelScope.launch {
+                repositorio.guardar(usuario, Juego.LA_PREVIA, despues.recorrido.size)
+            }
+        }
     }
 
     /** "Jugar otro camino": vuelve a la primera escena, sin pasar por la portada. */
