@@ -2,8 +2,6 @@ package com.example.tpjuego.game
 
 import com.example.tpjuego.data.Afirmacion
 import com.example.tpjuego.data.AfirmacionesRepositorio
-import com.example.tpjuego.data.HistorialCodec
-import com.example.tpjuego.data.ResultadoGuardado
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -75,13 +73,6 @@ class PartidaTest {
         assertEquals(1, p.aciertos)
         assertEquals(2, p.errores)
         assertEquals(listOf(false, true, false), p.respuestas.map { it.acerto })
-    }
-
-    @Test
-    fun historialSeGuardaYSeLeeIgual() {
-        val lista = listOf(ResultadoGuardado(1_000L, 4, 5), ResultadoGuardado(500L, 2, 5))
-        assertEquals(lista, HistorialCodec.decodificar(HistorialCodec.codificar(lista)))
-        assertEquals(emptyList<ResultadoGuardado>(), HistorialCodec.decodificar(""))
     }
 
     @Test

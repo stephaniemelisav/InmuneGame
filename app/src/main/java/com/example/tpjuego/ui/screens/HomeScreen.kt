@@ -28,6 +28,7 @@ fun HomeScreen(
     onLaPreviaClick: () -> Unit,
     onVerIntro: () -> Unit,
     onVerResumen: () -> Unit,
+    onVerRanking: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
     PantallaDegradado {
@@ -36,6 +37,7 @@ fun HomeScreen(
         Text("ELEGÍ UN JUEGO", style = MaterialTheme.typography.headlineLarge, color = Blanco)
         Row(modifier = Modifier.fillMaxWidth()) {
             AccionMenu("Mi resumen", onVerResumen)
+            AccionMenu("Ranking", onVerRanking)
             AccionMenu("Ver intro", onVerIntro)
             Spacer(Modifier.weight(1f))
             AccionMenu("Salir", onCerrarSesion)
@@ -49,7 +51,7 @@ fun HomeScreen(
         Spacer(Modifier.height(14.dp))
         TarjetaJuego(
             titulo = "Memotest",
-            descripcion = "Uní cada sustancia con su dato.",
+            descripcion = "Encontrá las parejas.",
             onClick = onMemotestClick
         )
         Spacer(Modifier.height(14.dp))
@@ -79,7 +81,7 @@ private fun HomeScreenPreview() {
         HomeScreen(
             usuario = "vale",
             onMitoORealidadClick = {}, onMemotestClick = {}, onLaPreviaClick = {},
-            onVerIntro = {}, onVerResumen = {}, onCerrarSesion = {}
+            onVerIntro = {}, onVerResumen = {}, onVerRanking = {}, onCerrarSesion = {}
         )
     }
 }

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 // Firebase: el plugin lee app/google-services.json (se descarga de la consola de Firebase).
@@ -59,6 +60,11 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+
+    // Base de datos local: Room sobre SQLite (KSP genera el código de los DAO).
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     // Base de datos externa: Cloud Firestore (Firebase). El BOM fija la versión.
     implementation(platform(libs.firebase.bom))

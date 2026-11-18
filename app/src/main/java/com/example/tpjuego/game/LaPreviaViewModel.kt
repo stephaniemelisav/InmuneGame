@@ -2,8 +2,11 @@ package com.example.tpjuego.game
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.example.tpjuego.data.Estadisticas
+import androidx.lifecycle.viewModelScope
 import com.example.tpjuego.data.Juego
+import com.example.tpjuego.data.PartidasRepository
+import com.example.tpjuego.data.Sesion
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,8 +14,11 @@ import kotlinx.coroutines.flow.update
 
 // Igual que en ¿Mito o Realidad?: el ViewModel sobrevive a la rotación de pantalla,
 // así la historia no vuelve a empezar al girar el celular.
-// Es AndroidViewModel para poder guardar la partida en el resumen del usuario.
+// Es AndroidViewModel para poder guardar la partida en la base local (Room).
 class LaPreviaViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val repositorio = PartidasRepository(application)
+    private val usuario = Sesion.usuarioOInvitado(application)
 
     private val _historia = MutableStateFlow(Historia())
     val historia: StateFlow<Historia> = _historia.asStateFlow()
@@ -35,7 +41,9 @@ class LaPreviaViewModel(application: Application) : AndroidViewModel(application
         _historia.value = despues
         // Al terminar la historia, se suma una partida al resumen (resultado = decisiones tomadas).
         if (!antes.terminada && despues.terminada) {
-            Estadisticas.registrarPartida(getApplication(), Juego.LA_PREVIA, despues.recorrido.size)
+            viewModelScope.launch {
+                repositorio.guardar(usuario, Juego.LA_PREVIA, despues.recorrido.size)
+            }
         }
     }
 

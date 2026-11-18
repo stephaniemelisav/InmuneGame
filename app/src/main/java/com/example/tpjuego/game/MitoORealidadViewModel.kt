@@ -3,11 +3,12 @@ package com.example.tpjuego.game
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.example.tpjuego.data.AfirmacionesRepositorio
-import com.example.tpjuego.data.Estadisticas
 import com.example.tpjuego.data.Juego
-import com.example.tpjuego.data.Sesion
-import com.example.tpjuego.data.HistorialPartidas
+import com.example.tpjuego.data.PartidasRepository
 import com.example.tpjuego.data.ResultadoGuardado
+import com.example.tpjuego.data.Sesion
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -27,17 +28,18 @@ sealed class EventoReloj {
 }
 
 // El ViewModel sobrevive a la rotación de pantalla: la partida no se pierde al girar el celular.
-// Es AndroidViewModel porque necesita el Context para guardar el historial.
+// Es AndroidViewModel porque necesita el Context para abrir la base de datos (Room).
 class MitoORealidadViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val historial = HistorialPartidas(application, Sesion.usuarioOInvitado(application))
+    private val repositorio = PartidasRepository(application)
+    private val usuario = Sesion.usuarioOInvitado(application)
 
     private val _partida = MutableStateFlow(nuevaPartida())
     val partida: StateFlow<Partida> = _partida.asStateFlow()
 
-    /** Partidas terminadas, de la más reciente a la más vieja. */
-    private val _historial = MutableStateFlow(historial.leer())
-    val partidasAnteriores: StateFlow<List<ResultadoGuardado>> = _historial.asStateFlow()
+    /** Últimas partidas del usuario, leídas de Room (de la más reciente a la más vieja). Se actualiza sola. */
+    val partidasAnteriores: StateFlow<List<ResultadoGuardado>> = repositorio.historialMito(usuario)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     // ---------- Reloj: 10 segundos por pregunta ----------
 
@@ -89,17 +91,11 @@ class MitoORealidadViewModel(application: Application) : AndroidViewModel(applic
         val despues = antes.siguiente()
         _partida.value = despues
         if (!despues.terminada) reiniciarReloj()
-        // Al terminar, se guarda una sola vez en el historial.
+        // Al terminar, se guarda una sola vez: en Room (historial y resumen) y en el ranking de Firebase.
         if (!antes.terminada && despues.terminada) {
-            _historial.value = historial.guardar(
-                ResultadoGuardado(
-                    fechaMillis = System.currentTimeMillis(),
-                    aciertos = despues.aciertos,
-                    total = despues.total
-                )
-            )
-            // Suma la partida al resumen del usuario.
-            Estadisticas.registrarPartida(getApplication(), Juego.MITO_O_REALIDAD, despues.aciertos)
+            viewModelScope.launch {
+                repositorio.guardar(usuario, Juego.MITO_O_REALIDAD, despues.aciertos, despues.total)
+            }
         }
     }
 

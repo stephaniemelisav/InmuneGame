@@ -66,6 +66,8 @@ import com.example.tpjuego.ui.theme.VerdeVerdadero
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.example.tpjuego.R  // <- NUEVO
+import com.example.tpjuego.ui.components.MusicaDeFondo  // <- NUEVO
 
 // Partida de ¿Mito o Realidad?: afirmación -> resultado -> ... -> pantalla final.
 // La lógica vive en Partida/ViewModel; acá solo se dibuja según el estado.
@@ -74,6 +76,8 @@ fun GameScreen(
     onTerminar: () -> Unit,
     viewModel: MitoORealidadViewModel = viewModel()
 ) {
+    MusicaDeFondo(R.raw.music3)   // <- NUEVO
+
     val partida by viewModel.partida.collectAsState()
     val anteriores by viewModel.partidasAnteriores.collectAsState()
     val segundos by viewModel.segundosRestantes.collectAsState()

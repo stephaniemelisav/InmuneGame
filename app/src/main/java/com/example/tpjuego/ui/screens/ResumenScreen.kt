@@ -21,7 +21,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tpjuego.game.ResumenViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -42,14 +46,32 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/** Resumen del usuario: dos pestañas, sus juegos (en el celular) y sus partidas en la nube. */
+/** Pantalla "Mi resumen": los datos salen de ResumenViewModel (Room y Firestore). */
+@Composable
+fun ResumenScreen(onVolver: () -> Unit, viewModel: ResumenViewModel = viewModel()) {
+    val resumenes by viewModel.resumenes.collectAsState()
+    val nube by viewModel.nube.collectAsState()
+    ResumenScreen(
+        usuario = viewModel.usuario,
+        resumenes = resumenes,
+        nube = nube,
+        onVolver = onVolver,
+        onReintentarNube = viewModel::cargarNube,
+        onBorrarHistorial = viewModel::borrarHistorial
+    )
+}
+
+/** Resumen del usuario: dos pestañas, sus juegos (base local Room) y sus partidas en la nube. */
 @Composable
 fun ResumenScreen(
     usuario: String,
     resumenes: List<ResumenJuego>,
     nube: EstadoNube = EstadoNube.NoConfigurada,
-    onVolver: () -> Unit
+    onVolver: () -> Unit,
+    onReintentarNube: () -> Unit = {},
+    onBorrarHistorial: () -> Unit = {}
 ) {
+    var confirmarBorrado by rememberSaveable { mutableStateOf(false) }
     val totalPartidas = resumenes.sumOf { it.partidas }
     var verNube by rememberSaveable { mutableStateOf(false) }
     val scrollJuegos = rememberScrollState()
@@ -77,11 +99,24 @@ fun ResumenScreen(
                 .verticalScroll(if (verNube) scrollNube else scrollJuegos)
         ) {
             if (verNube) {
-                TarjetaNube(nube)
+                TarjetaNube(nube, onReintentarNube)
             } else {
                 resumenes.forEach {
                     TarjetaResumen(it)
                     Spacer(Modifier.height(12.dp))
+                }
+                if (totalPartidas > 0) {
+                    // Baja en la base local: borra la tabla de partidas de este usuario (pide confirmación).
+                    TextButton(onClick = {
+                        if (confirmarBorrado) onBorrarHistorial()
+                        confirmarBorrado = !confirmarBorrado
+                    }) {
+                        Text(
+                            if (confirmarBorrado) "Tocá de nuevo para confirmar" else "Borrar historial del celular",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = Blanco
+                        )
+                    }
                 }
             }
             Spacer(Modifier.height(12.dp))
@@ -123,7 +158,7 @@ private fun TarjetaResumen(r: ResumenJuego) {
 
 /** Últimas partidas guardadas en la base de datos externa (Firestore). */
 @Composable
-private fun TarjetaNube(nube: EstadoNube) {
+private fun TarjetaNube(nube: EstadoNube, onReintentar: () -> Unit) {
     Tarjeta {
         Text("ÚLTIMAS PARTIDAS", style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(8.dp))
@@ -133,7 +168,12 @@ private fun TarjetaNube(nube: EstadoNube) {
                 style = MaterialTheme.typography.bodyMedium
             )
             EstadoNube.Cargando -> Text("Cargando…", style = MaterialTheme.typography.bodyLarge)
-            is EstadoNube.Error -> Text(nube.mensaje, style = MaterialTheme.typography.bodyLarge)
+            is EstadoNube.Error -> {
+                Text(nube.mensaje, style = MaterialTheme.typography.bodyLarge)
+                TextButton(onClick = onReintentar) {
+                    Text("Reintentar", style = MaterialTheme.typography.labelLarge, color = AzulNoche)
+                }
+            }
             is EstadoNube.Lista ->
                 if (nube.partidas.isEmpty()) {
                     Text("Todavía no hay partidas guardadas.", style = MaterialTheme.typography.bodyLarge)
