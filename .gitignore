@@ -9,3 +9,5 @@
 .cxx
 local.properties
 /app/build
+# Credenciales de Firebase: no se suben al repositorio (ver FIREBASE.md)
+app/google-services.json
