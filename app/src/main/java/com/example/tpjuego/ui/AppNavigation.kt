@@ -10,7 +10,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.tpjuego.ui.screens.ComoSeJuegaScreen
 import com.example.tpjuego.ui.screens.GameScreen
 import com.example.tpjuego.ui.screens.HomeScreen
 import com.example.tpjuego.ui.screens.IntroScreen
@@ -31,7 +30,6 @@ object Routes {
     const val MENU = "menu"
     const val RESUMEN = "resumen"
     const val MITO_PORTADA = "mito/portada"
-    const val MITO_COMO_SE_JUEGA = "mito/como-se-juega"
     const val MITO_JUEGO = "mito/juego"
 }
 
@@ -89,7 +87,7 @@ fun AppNavigation(
     }
 }
 
-/** Navegación de MitoORealidadActivity: portada -> cómo se juega -> partida. */
+/** Navegación de MitoORealidadActivity: portada (con las reglas) -> partida. */
 @Composable
 fun MitoORealidadNavigation(onTerminar: () -> Unit) {
     val navController = rememberNavController()
@@ -98,18 +96,13 @@ fun MitoORealidadNavigation(onTerminar: () -> Unit) {
         composable(Routes.MITO_PORTADA) {
             // "Volver al menú" cierra esta Activity y vuelve a MainActivity.
             PortadaScreen(
-                onComenzar = { navController.navigate(Routes.MITO_COMO_SE_JUEGA) },
-                onVolver = onTerminar
-            )
-        }
-        composable(Routes.MITO_COMO_SE_JUEGA) {
-            ComoSeJuegaScreen(
-                onJugar = {
-                    // Saca "Cómo se juega" de la pila: el botón atrás vuelve a la portada.
+                onComenzar = {
+                    // Saca la portada de la pila: el botón atrás desde el juego vuelve al menú.
                     navController.navigate(Routes.MITO_JUEGO) {
-                        popUpTo(Routes.MITO_PORTADA)
+                        popUpTo(Routes.MITO_PORTADA) { inclusive = true }
                     }
-                }
+                },
+                onVolver = onTerminar
             )
         }
         composable(Routes.MITO_JUEGO) {
